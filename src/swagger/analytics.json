@@ -1,0 +1,28 @@
+{
+  "paths": {
+    "/analytics/top-albums": {
+      "get": {
+        "summary": "Top albums by followers",
+        "tags": ["Analytics"],
+        "responses": { "200": { "description": "Top albums list" } }
+      }
+    },
+    "/analytics/genre-stats": {
+      "get": {
+        "summary": "Albums count by genre",
+        "tags": ["Analytics"],
+        "responses": { "200": { "description": "Genre stats" } }
+      }
+    },
+    "/analytics/artist-timeline/{artist}": {
+      "get": {
+        "summary": "Albums released per year for artist",
+        "tags": ["Analytics"],
+        "parameters": [
+          { "name": "artist", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Artist timeline" } }
+      }
+    }
+  }
+}

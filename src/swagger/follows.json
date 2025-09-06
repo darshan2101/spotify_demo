@@ -1,0 +1,38 @@
+{
+  "paths": {
+    "/follows": {
+      "get": {
+        "summary": "List followed albums",
+        "tags": ["Follows"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Followed albums list" } }
+      }
+    },
+    "/follows/{albumId}": {
+      "post": {
+        "summary": "Follow an album",
+        "tags": ["Follows"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "albumId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "201": { "description": "Followed" },
+          "404": { "description": "Album not found" }
+        }
+      },
+      "delete": {
+        "summary": "Unfollow an album",
+        "tags": ["Follows"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "albumId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Unfollowed" },
+          "404": { "description": "Not following" }
+        }
+      }
+    }
+  }
+}

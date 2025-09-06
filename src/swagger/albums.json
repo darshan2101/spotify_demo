@@ -1,0 +1,74 @@
+{
+  "paths": {
+    "/albums": {
+      "get": {
+        "summary": "Browse albums",
+        "tags": ["Albums"],
+        "responses": { "200": { "description": "Albums list" } }
+      },
+      "post": {
+        "summary": "Create a new album",
+        "tags": ["Albums"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "201": { "description": "Album created" },
+          "403": { "description": "Forbidden" }
+        }
+      }
+    },
+    "/albums/{albumId}": {
+      "get": {
+        "summary": "Get album details",
+        "tags": ["Albums"],
+        "parameters": [
+          { "name": "albumId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Album details" },
+          "404": { "description": "Not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete album (soft)",
+        "tags": ["Albums"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "albumId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Album deleted" },
+          "403": { "description": "Forbidden" }
+        }
+      }
+    },
+    "/albums/{albumId}/songs": {
+      "post": {
+        "summary": "Add song to album",
+        "tags": ["Songs"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "albumId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "201": { "description": "Song added" },
+          "404": { "description": "Album not found" }
+        }
+      }
+    },
+    "/albums/{albumId}/songs/{songId}": {
+      "delete": {
+        "summary": "Delete song from album (soft)",
+        "tags": ["Songs"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "albumId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "songId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Song deleted" },
+          "404": { "description": "Song not found" }
+        }
+      }
+    }
+  }
+}
