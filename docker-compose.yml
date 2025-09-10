@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    container_name: spotify_demo_app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - MONGO_URI=mongodb://mongo:27017/spotify_demo
+      - REDIS_URL=redis://redis:6379
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - redis
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:6
+    container_name: spotify_demo_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    container_name: spotify_demo_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
+  redis_data:
