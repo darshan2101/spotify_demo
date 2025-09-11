@@ -25,7 +25,7 @@ async function register(req, res, next) {
 
     return res.status(201).json({
       success: true,
-      message: "User registered",
+      message: `User registered Successfully, Welcome to Karkhana product ${username} `,
       data: { id: user._id, username: user.username, email: user.email, role: user.role },
     });
   } catch (err) {
