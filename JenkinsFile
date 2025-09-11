@@ -1,0 +1,87 @@
+pipeline {
+    agent any
+
+    environment {
+        APP_NAME = "spotify_demo_app"
+        COMPOSE_FILE = "docker-compose.yml"
+    }
+
+    options {
+        // prevent Jenkins auto-checkout
+        skipDefaultCheckout(true)
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                cleanWs()
+                dir("${env.WORKSPACE}") {
+                    sh '''
+                        git config --global --add safe.directory "$PWD"
+                        git clone https://github.com/darshan2101/spotify_demo.git .
+                        git checkout master
+
+                        # If .env does not exist, create it
+                        if [ ! -f ".env" ]; then
+                          echo "Creating default .env file..."
+                          cat <<EOF > .env
+# Server
+PORT=3000
+NODE_ENV=development
+
+# MongoDB
+MONGO_URI=mongodb://localhost:27017/mini_spotify
+
+# CORS
+CORS_ORIGIN=http://localhost:5173,http://localhost:3000
+
+# JWT
+JWT_ACCESS_SECRET=change_me_access
+JWT_REFRESH_SECRET=change_me_refresh
+ACCESS_TOKEN_TTL=15m
+REFRESH_TOKEN_TTL=7d
+
+# Rate limiting (optional)
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX=200
+EOF
+                        fi
+                    '''
+                }
+                echo "✅ Code cloned successfully and .env verified"
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    try {
+                        sh "docker-compose -f ${COMPOSE_FILE} build"
+                    } catch (err) {
+                        error "Docker build failed! Keeping old containers."
+                    }
+                }
+            }
+        }
+
+        stage('Deploy Containers') {
+            steps {
+                script {
+                    sh "docker-compose -f ${COMPOSE_FILE} down --remove-orphans"
+                    sh "docker-compose -f ${COMPOSE_FILE} up -d"
+                    sleep time: 10, unit: 'SECONDS'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Deployment succeeded! Running containers are the new build."
+        }
+        failure {
+            echo "❌ Build failed. Old containers remain running."
+        }
+    }
+}
